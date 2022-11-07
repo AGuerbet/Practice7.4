@@ -1,0 +1,60 @@
+---
+title: "Practice7.4"
+author: "Arnaud Guerbet"
+date: "2022-11-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyr)
+```
+
+
+```{r cars}
+##Built the function my.t.test 
+my.t.test<-function(data1,data2){
+  
+  x1<-mean(data1)
+  x2<-mean(data2)
+  S1<-sd(data1)
+  S2<-sd(data2)
+  N1<-length(data1)
+  N2<-length(data2)
+  
+  t=(x1-x2)/sqrt((S1/N1)+(S2/N2))#formula of t test
+  df=N1-1+N2-1#formula of df
+  pt=pt(t,df)#extract of p-value
+  
+  if (pt>0.05){
+    paste('not significantly different')}
+  else {paste('significantly different')}
+}
+
+#test my.t.test function on rairuoho dataset
+
+setwd("C:/Users/ASUS/Desktop/NTU_Courses/R courses/Week8")
+rairuoho<-read.table('rairuoho.txt', header=T, sep='\t', dec='.') 
+
+#Reorganize the dataset
+rairuoho$treatment<-ifelse(rairuoho$treatment=='nutrient','enriched','water')
+rairuoho$total.length<-rairuoho$day8-rairuoho$day3#calculate of the total length by day8-day3
+rairuoho <- dplyr::select(rairuoho,c(9,14))#select only interesting column
+head(rairuoho)
+
+#creation of two different dataset
+enriched<-rairuoho[rairuoho$treatment=='enriched',2]
+water<-rairuoho[rairuoho$treatment=='water',2]
+head(water)
+head(enriched)
+
+#check the distribution of data
+boxplot(enriched,water)
+
+#t test on the two datasets
+my.t.test(enriched,water)
+```
+
+The result of the test show no significant difference between the total length of grass with enriched water or not. This result means that the enriched treatment is not efficient for the grass growth. 
+They should do a better one. 
